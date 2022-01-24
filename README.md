@@ -5,3 +5,4 @@ The operation rooms are also available for a limited time in a day. Departments 
 The project has two stages. First stage is to implement an optimization algorith to solve the problem. The problem is almost identical to knapsack problem. 
 Pyomo with open-source solvers has already been used to solve this integer programing. However, other approaches are also welcomed. 
 At the second stage, an interface and corresponding database will be developed to allow the users at the hospital to easily communicate with the solver. 
+Please watch the video for the further explaination. https://hochschule-rhein-waal.sciebo.de/s/Z25MLnIfCrv5Mbg
