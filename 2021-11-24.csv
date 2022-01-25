@@ -1,9 +1,0 @@
-operation_id,Abteilungs-ID,ops,weight,value,op_room_id,dep_id
-op_or1_1,OR1,xxxx,45.0,3.0,HLK1,
-op_or1_7,OR1,xxxx,76.0,7.0,HLK1,
-op_or1_8,OR1,xxxx,76.0,7.0,HLK1,
-op_or1_9,IM2,xxxx,122.0,1.0,OP1,
-op_or1_11,IM2,xxxx,102.0,1.0,OP1,
-op_or1_19,IM2,xxxx,302.0,5.0,HLK2,
-op_or1_34,OR1,xxxx,302.0,5.0,OP1,
-xx_055,,xyxx,100.0,3.0,HLK1,CH1
