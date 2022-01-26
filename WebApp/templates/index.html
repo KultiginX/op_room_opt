@@ -39,8 +39,8 @@
             
 
             <div class="form-group mx-sm-3 mb-2" name='dur_and_cap'>
-                <input type="number" class="form-control" name='dep_capacity' id="dep_capacity" placeholder="Department Capacities" required>
-                <input type="number" class="form-control" name='op_duration' id="op_duration" placeholder="Operation Duration (min)" required>
+                <input type="number" min="0" class="form-control" name='dep_capacity' id="dep_capacity" placeholder="Department Capacities" required>
+                <input type="number" min="0" class="form-control" name='op_duration' id="op_duration" placeholder="Operation Duration (min)" required>
             </div>
             <div class="dropdown_select2" name='dropdown_select2'>
                 <select id="list2" name='op_urgency' onchange="getSelectValue2();" required>
@@ -67,11 +67,10 @@
             <thead><h2>Appointments</h2></thead>
             <tbody class="table_body">
                 <tr>
-                    <th>User ID</th>
-                    <th>User Name</th>
+                    <th>Operation ID</th>
+                    <th>Doctor Name</th>
                     <th>Operation Date (mm/dd/yyyy)</th>
                     <th>Department Name</th>
-                    <th>Department capacity</th>
                     <th>Operation Duration</th>
                     <th>Urgency of Operation</th>
                     <th>Actions</th>
@@ -82,11 +81,9 @@
                         <td>{{task.doctor}}</td>
                         <td>{{task.operation_date}}</td>
                         <td>{{task.department_name}}</td>
-                        <td>{{task.department_capacity}}</td>
                         <td>{{task.operation_duration}}</td>
                         <td>{{task.operation_urgency}}</td>
                         <td>
-                            <!--<a href="/update/{{task.id}}">Update</a> <br>-->
                             <a href="/delete/{{task.id}}">Delete</a>
                         </td>
                     </tr>

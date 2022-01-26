@@ -6,6 +6,7 @@ from urllib import request
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from algorithm import solve_knapsack_problem
 import uuid
 
 
@@ -37,7 +38,7 @@ def index():
 
         ####
         new_user_entry = User_Entries(
-                        id=str(uuid.uuid4()), 
+                        id=str(dep_name + '-' + str(uuid.uuid4())), 
                         doctor='John Doe', 
                         operation_date=op_date, 
                         department_name=dep_name,
@@ -69,7 +70,16 @@ def delete(id):
     except:
         return 'There was a problem deleting that'
 
+@app.route('/admin', methods=['GET'])
+def show_tables():
+    entries = User_Entries.query.order_by(User_Entries.operation_date).all()
+    return render_template('tables.html', tasks=entries)
 
+@app.route('/result', methods=['GET'])
+def optimize():
+    entries = User_Entries.query.order_by(User_Entries.operation_date).all()
+    results = solve_knapsack_problem(entries)
+    return render_template('result.html', tasks=entries)
 
 if __name__ == '__main__':
     app.run(debug=True)
