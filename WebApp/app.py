@@ -27,7 +27,13 @@ class User_Entries(db.Model):
 class Department_Info(db.Model):
     id = db.Column(db.String(200), primary_key=True)
     department_name = db.Column(db.String(200), nullable=False)
-    department_capacity = db.Column(db.String(200), nullable=False)
+    department_capacity = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+
+class Operation_rooms_Info(db.Model):
+    id = db.Column(db.String(200), primary_key=True)
+    room_name = db.Column(db.String(200), nullable=False)
+    room_capacity = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
 
@@ -100,23 +106,29 @@ def delete(id):
 @app.route('/admin', methods=['GET', 'POST'])
 def show_tables():
     if request.method == 'POST':
-        date = request.form['date']
-        dep_name = request.form['dep_name']
-        dep_capacity = request.form['dep_capacity']
+        if request.form['submit_btn2'] == 'submit_form2':
+            date = request.form['date']
+            dep_name = request.form['dep_name']
+            dep_capacity = request.form['dep_capacity']
+            
+            new_department_info = Department_Info(
+                    id=str(dep_name + '-' + str(uuid.uuid4())),
+                    date=datetime.strptime(date, '%m/%d/%Y').date(), 
+                    department_name=dep_name,
+                    department_capacity=int(dep_capacity), 
+                    )
+            try:
+                db.session.add(new_department_info)
+                db.session.commit()
+                return redirect('/admin')
+            except:
+                print('There was an issue adding new user entry')
+                raise
         
-        new_department_info = Department_Info(
-                id=str(dep_name + '-' + str(uuid.uuid4())),
-                date=datetime.strptime(date, '%m/%d/%Y').date(), 
-                department_name=dep_name,
-                department_capacity=int(dep_capacity), 
-                )
-        try:
-            db.session.add(new_department_info)
-            db.session.commit()
-            return redirect('/admin')
-        except:
-            print('There was an issue adding new user entry')
-            raise
+        elif request.form['submit_btn2'] == 'filter':
+            filtered_date = datetime.strptime(request.form['filter_date'], '%m/%d/%Y')
+            filtered_entries = Department_Info.query.filter(Department_Info.date==filtered_date).all()
+            return render_template('admin.html', departments=filtered_entries)
     else:
         department_info = Department_Info.query.order_by(Department_Info.date).all()
         return render_template('admin.html', departments=department_info)
@@ -136,6 +148,47 @@ def optimize():
     entries = User_Entries.query.order_by(User_Entries.operation_date).all()
     results = solve_knapsack_problem(entries)
     return render_template('result.html', tasks=entries)
+
+@app.route('/rooms', methods=['GET', 'POST'])
+def get_rooms():
+    if request.method == 'POST':
+        if request.form['submit_btn3'] == 'submit_form3':
+            date = request.form['date']
+            room_name = request.form['room_name']
+            room_capacity = request.form['room_capacity']
+            
+            new_room_info = Operation_rooms_Info(
+                    id=str(room_name + '-' + str(uuid.uuid4())),
+                    date=datetime.strptime(date, '%m/%d/%Y').date(), 
+                    room_name=room_name,
+                    room_capacity=int(room_capacity), 
+                    )
+            try:
+                db.session.add(new_room_info)
+                db.session.commit()
+                return redirect('/rooms')
+            except:
+                print('There was an issue adding new user entry')
+                raise
+        
+        elif request.form['submit_btn3'] == 'filter':
+            filtered_date = datetime.strptime(request.form['filter_date'], '%m/%d/%Y')
+            filtered_entries = Operation_rooms_Info.query.filter(Operation_rooms_Info.date==filtered_date).all()
+            return render_template('room.html', rooms=filtered_entries)
+    else:
+        rooms_info = Operation_rooms_Info.query.order_by(Operation_rooms_Info.date).all()
+    return render_template('room.html', rooms = rooms_info)
+
+@app.route('/rooms/delete/<id>')
+def delete_op_rooms(id):
+    op_room_info_to_delete = Operation_rooms_Info.query.get_or_404(id)
+    try:
+        db.session.delete(op_room_info_to_delete)
+        db.session.commit()
+        return redirect('/rooms')
+    except:
+        return 'There was a problem deleting that'
+
 
 if __name__ == '__main__':
     app.run(debug=True)

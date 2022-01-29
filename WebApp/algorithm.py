@@ -3,4 +3,6 @@ def solve_knapsack_problem(df):
     
 def check_possibility():
     print('possible to add new entry or not')
-    return 'not possible' 
+    return 'possible' 
+
+
