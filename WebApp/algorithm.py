@@ -1,7 +1,6 @@
 def solve_knapsack_problem(df):
-    def test():
-        print('hello')
-        checker()
     return df 
-def checker():
-    pass
+    
+def check_possibility():
+    print('possible to add new entry or not')
+    return 'not possible' 
