@@ -21,30 +21,8 @@
         </a>
     </div>
     <div class="Table_content">
-        <table class="table">
-            <thead><h2>Optimization result</h2></thead>
-            <tbody class="table_body">
-                <tr>
-                    <th>Operation ID</th>
-                    <th>Department name</th>
-                    <th>Operations</th>
-                    <th>Weight</th>
-                    <th>Value</th>
-                    <th>Operation room ID</th>
-                </tr>
-                {% for task in tasks: %}
-                    <tr>
-                        <td>{{task.id}}</td>
-                        <td>{{task.department_name}}</td>
-                        <td>{{task.department_capacity}}</td>
-                        <td>{{task.department_capacity}}</td>
-                        <td>{{task.department_capacity}}</td>
-                        <td>{{task.department_capacity}}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <h3>Sorry, this day is already booked. Please choose another day.</h3>
+        <button class="btn btn-warning mb-2"><a href="/">Go Back</a></button>
     </div>
-
 </body>
 </html>

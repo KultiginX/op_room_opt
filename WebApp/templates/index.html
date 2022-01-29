@@ -28,7 +28,7 @@
         
             <div class="dropdown_select" name='dropdown_select'>
                 <select id="list" name='dep_name' onchange="getSelectValue();" required>
-                    <option value="" disabled selected>Select Department Name</option>
+                    <option value="" disabled selected>Select Department</option>
                     <option value="Department_1">Department 1</option>
                     <option value="Department_2">Department 2</option>
                     <option value="Department_3">Department 3</option>
@@ -39,7 +39,7 @@
             
 
             <div class="form-group mx-sm-3 mb-2" name='dur_and_cap'>
-                <input type="number" min="0" class="form-control" name='dep_capacity' id="dep_capacity" placeholder="Department Capacities" required>
+                <input type="text" class="form-control" name='doctor_name' id="doctor_name" placeholder="Doctor Name" required>
                 <input type="number" min="0" class="form-control" name='op_duration' id="op_duration" placeholder="Operation Duration (min)" required>
             </div>
             <div class="dropdown_select2" name='dropdown_select2'>
@@ -50,18 +50,39 @@
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
-                    <option value="5">6</option>
-                    <option value="5">7</option>
-                    <option value="5">8</option>
-                    <option value="5">9</option>
-                    <option value="5">10</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+            <button type="submit" class="btn btn-primary mb-2" name="submit_btn" value="submit_form">Submit</button>
         </form>
- 
     </div>
+    <div class="image">
+        <a href="/">        
+            <img src="http://www.clipartsuggest.com/images/633/red-medical-symbol-9MqeBw-clipart.jpeg" alt="logo">
+        </a>
+    </div>
+    <div class="filter">
+        <form action="/" method="post">
+            <div class="input-group date" id="datepicker2">
+                <input type="text" class="form-control" id='date_input2' name='filter_date' required/>
+                <span class="input-group-append" id="filter_span">
+                    <span class="input-group-text bg-white" >
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                </span>
+            </div>
+            <div class="filter_and_home_btns">
+                <button type="submit" class="btn btn-primary mb-2" name="submit_btn" value="filter" id="filter_btn">Filter</button>
+                <button type="button" class="btn btn-warning mb-2" id="home_btn" onclick="history.back()"><a href="javascript:history.back()">Go Back</a></button>
+            </div>
+        </form>
+    </div>
+
     <div class="Table_content">
         <table class="table">
             <thead><h2>Appointments</h2></thead>
@@ -69,8 +90,8 @@
                 <tr>
                     <th>Operation ID</th>
                     <th>Doctor Name</th>
-                    <th>Operation Date (mm/dd/yyyy)</th>
-                    <th>Department Name</th>
+                    <th>Operation Date (yyyy/mm/dd)</th>
+                    <th>Department</th>
                     <th>Operation Duration</th>
                     <th>Urgency of Operation</th>
                     <th>Actions</th>
@@ -79,7 +100,7 @@
                     <tr>
                         <td>{{task.id}}</td>
                         <td>{{task.doctor}}</td>
-                        <td>{{task.operation_date}}</td>
+                        <td>{{task.operation_date.date()}}</td>
                         <td>{{task.department_name}}</td>
                         <td>{{task.operation_duration}}</td>
                         <td>{{task.operation_urgency}}</td>
@@ -95,6 +116,10 @@
     <script type="text/javascript">
         $(function() {
             $('#datepicker').datepicker();
+        });
+
+        $(function() {
+            $('#datepicker2').datepicker();
         });
 
         function getSelectValue()
