@@ -6,7 +6,9 @@ from urllib import request
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime
-from algorithm import check_possibility, solve_knapsack_problem
+
+from sqlalchemy import except_
+from algorithm import Solve_Problem
 import uuid
 import js2py
 
@@ -23,6 +25,7 @@ class User_Entries(db.Model):
     department_name = db.Column(db.String(200), nullable=False)
     operation_duration  = db.Column(db.Integer, nullable= False)
     operation_urgency = db.Column(db.Integer, nullable=False)
+    #operation_room = db.Column(db.String(200))
 
 class Department_Info(db.Model):
     id = db.Column(db.String(200), primary_key=True)
@@ -41,7 +44,7 @@ class Operation_rooms_Info(db.Model):
     def __repr__(self):
         return '<User entry %r is created>' %self.id
 
-
+# Create all routes
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
@@ -62,24 +65,64 @@ def index():
                             operation_urgency=int(op_urgency)
                             )
 
-            possible_to_add = check_possibility()
-            try:
-                db.session.add(new_user_entry)
-                db.session.commit()
-                
-                if possible_to_add != 'possible':
-                    user_entry_to_delete = User_Entries.query.get_or_404(new_user_entry.id)
-                    try:
-                        db.session.delete(user_entry_to_delete)
-                        db.session.commit()
-                    except:
-                        return 'There was a problem deleting that'                
-                
-                    return render_template('alert.html')
-                return redirect('/')
-            except:
-                print('There was an issue adding new user entry')
-                raise 
+            
+            ####
+            # Change date format that user entered
+            # date format should be same with DB 
+            # so that we can filter the date from DB
+            op_date_formatted = datetime.strptime(request.form['op_date'], '%m/%d/%Y')
+            print(op_date_formatted)
+            # Bring two tables from DB
+            departments_info = Department_Info.query.filter(Department_Info.date==op_date_formatted).all()
+            operation_rooms_info = Operation_rooms_Info.query.filter(Operation_rooms_Info.date==op_date_formatted).all()
+            ####
+            # If none of them is empty, add them into Solve_Problem class
+            if len(departments_info)!=0 and len(operation_rooms_info)!=0:
+                try:
+                    # Save new user entry into DB
+                    db.session.add(new_user_entry)
+                    db.session.commit()
+                    # Bring user entry from DB
+                    user_entries = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
+                    
+                    # Call  Solve_Problem class and give all tables as arguments
+                    possible_to_add = Solve_Problem(user_entries, departments_info, operation_rooms_info)                        
+                    if possible_to_add.get_ops(op_date_formatted) != 'possible':
+                        user_entry_to_delete = User_Entries.query.get_or_404(new_user_entry.id)
+                        try:
+                            db.session.delete(user_entry_to_delete)
+                            db.session.commit()
+                        except:
+                            return 'There was a problem deleting that'
+
+                        return render_template('alert.html')
+                    else:
+                        # Drop all entries in the given date from DB
+                        entries_to_delete = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
+                        try:
+                            db.session.delete(entries_to_delete)
+                            db.session.commit()                       
+                        except:
+                            return 'There was a problem deleting user entries'
+                        
+                        # then add new updated entries from Solve_Problem.get_ops() method
+                        updated_user_entries = Solve_Problem.get_ops(op_date_formatted)
+                        try:
+                            db.session.add(updated_user_entries)
+                            db.session.commit()
+                        except:
+                            return 'There was a problem adding updated user entries'
+                        
+                        return redirect('/')
+                except:
+                    print('There was an issue adding new user entry')
+                    raise 
+            else:
+                # Create new alert page to inform a user to fill empty tables
+                return render_template('alert2.html')
+
+
+                 
         
         elif request.form['submit_btn'] == 'filter':
             filtered_date = datetime.strptime(request.form['filter_date'], '%m/%d/%Y')
