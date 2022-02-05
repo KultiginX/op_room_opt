@@ -1,8 +1,8 @@
-from asyncio import tasks
-from crypt import methods
-from distutils.log import debug
-from pickle import FALSE
-from urllib import request
+#from asyncio import tasks
+#from crypt import methods
+#from distutils.log import debug
+#from pickle import FALSE
+#from urllib import request
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime
@@ -10,7 +10,7 @@ from datetime import date, datetime
 from sqlalchemy import except_
 from algorithm import Solve_Problem
 import uuid
-import js2py
+#import js2py
 
 
 app = Flask(__name__)
@@ -74,6 +74,7 @@ def index():
             print(op_date_formatted)
             # Bring two tables from DB
             departments_info = Department_Info.query.filter(Department_Info.date==op_date_formatted).all()
+            print(departments_info)
             operation_rooms_info = Operation_rooms_Info.query.filter(Operation_rooms_Info.date==op_date_formatted).all()
             ####
             # If none of them is empty, add them into Solve_Problem class
@@ -86,8 +87,8 @@ def index():
                     user_entries = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
                     
                     # Call  Solve_Problem class and give all tables as arguments
-                    possible_to_add = Solve_Problem(user_entries, departments_info, operation_rooms_info)                        
-                    if possible_to_add.get_ops(op_date_formatted) != 'possible':
+                    possible_to_add = Solve_Problem()
+                    if possible_to_add.get_ops(op_date_formatted,user_entries) == 'not possible':
                         user_entry_to_delete = User_Entries.query.get_or_404(new_user_entry.id)
                         try:
                             db.session.delete(user_entry_to_delete)
