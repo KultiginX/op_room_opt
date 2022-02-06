@@ -111,22 +111,24 @@
             <thead><h2>Appointments</h2></thead>
             <tbody class="table_body">
                 <tr>
-                    <th>Operation ID</th>
+                    
                     <th>Doctor Name</th>
                     <th>Operation Date (yyyy/mm/dd)</th>
                     <th>Department</th>
                     <th>Operation Duration</th>
                     <th>Urgency of Operation</th>
+                    <th> Operation Rooms</th>
                     <th>Actions</th>
                 </tr>
                 {% for task in tasks: %}
                     <tr>
-                        <td>{{task.id}}</td>
+                        
                         <td>{{task.doctor}}</td>
                         <td>{{task.operation_date.date()}}</td>
                         <td>{{task.department_name}}</td>
                         <td>{{task.operation_duration}}</td>
                         <td>{{task.operation_urgency}}</td>
+                        <td>{{task.operation_room}}</td>
                         <td>
                             <a href="/delete/{{task.id}}">Delete</a>
                         </td>
