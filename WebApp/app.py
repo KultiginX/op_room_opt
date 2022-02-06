@@ -1,39 +1,42 @@
-#from asyncio import tasks
-#from crypt import methods
-#from distutils.log import debug
-#from pickle import FALSE
-#from urllib import request
+from asyncio import tasks
+from crypt import methods
+from distutils.log import debug
+from pickle import FALSE
+from urllib import request
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime
-
-from sqlalchemy import except_
-from algorithm import Solve_Problem
+import pandas as pd
+#from sqlalchemy import except_
+from algorithm2 import Solve_Problem
 import uuid
 #import js2py
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
 # Create Database Tables
 class User_Entries(db.Model):
+    #__tablename__ = 'user_entries'
     id = db.Column(db.String(200), primary_key=True)
     doctor = db.Column(db.String(200), nullable= False)
     operation_date = db.Column(db.DateTime, nullable=False)
     department_name = db.Column(db.String(200), nullable=False)
     operation_duration  = db.Column(db.Integer, nullable= False)
     operation_urgency = db.Column(db.Integer, nullable=False)
-    #operation_room = db.Column(db.String(200))
+    operation_room = db.Column(db.String(200))
 
 class Department_Info(db.Model):
+    #__tablename__ = 'department_info'
     id = db.Column(db.String(200), primary_key=True)
     department_name = db.Column(db.String(200), nullable=False)
     department_capacity = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
 class Operation_rooms_Info(db.Model):
+    #__tablename__ = 'operation_rooms_info'
     id = db.Column(db.String(200), primary_key=True)
     room_name = db.Column(db.String(200), nullable=False)
     room_capacity = db.Column(db.Integer, nullable=False)
@@ -41,8 +44,8 @@ class Operation_rooms_Info(db.Model):
 
 
 
-    def __repr__(self):
-        return '<User entry %r is created>' %self.id
+    # def __repr__(self):
+    #    return '<User entry %r is created>' %self.id
 
 # Create all routes
 @app.route('/', methods=['POST', 'GET'])
@@ -71,11 +74,13 @@ def index():
             # date format should be same with DB 
             # so that we can filter the date from DB
             op_date_formatted = datetime.strptime(request.form['op_date'], '%m/%d/%Y')
-            print(op_date_formatted)
+
             # Bring two tables from DB
             departments_info = Department_Info.query.filter(Department_Info.date==op_date_formatted).all()
-            print(departments_info)
             operation_rooms_info = Operation_rooms_Info.query.filter(Operation_rooms_Info.date==op_date_formatted).all()
+            #print(type(operation_rooms_info))
+            #print(operation_rooms_info, departments_info)
+
             ####
             # If none of them is empty, add them into Solve_Problem class
             if len(departments_info)!=0 and len(operation_rooms_info)!=0:
@@ -85,10 +90,14 @@ def index():
                     db.session.commit()
                     # Bring user entry from DB
                     user_entries = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
+
+                    #user_entries = pd.DataFrame(user_entries= user_entries.transpose(), columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
+                    #print(basket)
                     
                     # Call  Solve_Problem class and give all tables as arguments
-                    possible_to_add = Solve_Problem()
-                    if possible_to_add.get_ops(op_date_formatted,user_entries) == 'not possible':
+                    algorithm = Solve_Problem() 
+                    possible_to_add = algorithm.get_ops(op_date_formatted, user_entries, departments_info, operation_rooms_info)                       
+                    if  possible_to_add == 'not possible':
                         user_entry_to_delete = User_Entries.query.get_or_404(new_user_entry.id)
                         try:
                             db.session.delete(user_entry_to_delete)
@@ -107,9 +116,8 @@ def index():
                             return 'There was a problem deleting user entries'
                         
                         # then add new updated entries from Solve_Problem.get_ops() method
-                        updated_user_entries = Solve_Problem.get_ops(op_date_formatted)
                         try:
-                            db.session.add(updated_user_entries)
+                            db.session.add(possible_to_add)
                             db.session.commit()
                         except:
                             return 'There was a problem adding updated user entries'
@@ -190,7 +198,7 @@ def admin_delete(id):
 @app.route('/result', methods=['GET'])
 def optimize():
     entries = User_Entries.query.order_by(User_Entries.operation_date).all()
-    results = solve_knapsack_problem(entries)
+    results = Solve_Problem()
     return render_template('result.html', tasks=entries)
 
 @app.route('/rooms', methods=['GET', 'POST'])
