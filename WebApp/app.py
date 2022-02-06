@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime
 import pandas as pd
 #from sqlalchemy import except_
-from algorithm2 import Solve_Problem
+from algorithm3 import Solve_Problem
 import uuid
 #import js2py
 
@@ -19,7 +19,7 @@ db = SQLAlchemy(app)
 
 # Create Database Tables
 class User_Entries(db.Model):
-    #__tablename__ = 'user_entries'
+    __tablename__ = 'user_entries'
     id = db.Column(db.String(200), primary_key=True)
     doctor = db.Column(db.String(200), nullable= False)
     operation_date = db.Column(db.DateTime, nullable=False)
@@ -97,7 +97,9 @@ def index():
                     # Call  Solve_Problem class and give all tables as arguments
                     algorithm = Solve_Problem() 
                     possible_to_add = algorithm.get_ops(op_date_formatted, user_entries, departments_info, operation_rooms_info)                       
-                    if  possible_to_add == 'not possible':
+                    print(len(possible_to_add))
+
+                    if  len(possible_to_add) < 1:
                         user_entry_to_delete = User_Entries.query.get_or_404(new_user_entry.id)
                         try:
                             db.session.delete(user_entry_to_delete)
@@ -108,16 +110,24 @@ def index():
                         return render_template('alert.html')
                     else:
                         # Drop all entries in the given date from DB
-                        entries_to_delete = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
+                        #entries_to_delete = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
+                        stmt = User_Entries.__table__.delete().where(User_Entries.operation_date==op_date_formatted)
+
                         try:
-                            db.session.delete(entries_to_delete)
-                            db.session.commit()                       
+                            db.session.execute(stmt)
+                            db.session.commit()   
+                            print('successfully deleted from DB')                    
                         except:
                             return 'There was a problem deleting user entries'
                         
                         # then add new updated entries from Solve_Problem.get_ops() method
+                        
+                        
                         try:
-                            db.session.add(possible_to_add)
+                            possible_to_add.to_sql(name='user_entries', con=db.engine, if_exists='append',index=False)
+                            print('basket', possible_to_add)
+                            print('successfully appended into DB')
+                            #db.session.add()
                             db.session.commit()
                         except:
                             return 'There was a problem adding updated user entries'
@@ -141,6 +151,7 @@ def index():
             return render_template('index.html', tasks=filtered_entries)
     else:
         entries = User_Entries.query.order_by(User_Entries.operation_date).all()
+        print(entries)
         return render_template('index.html', tasks=entries)
 
 
