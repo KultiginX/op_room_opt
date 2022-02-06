@@ -16,20 +16,20 @@ class Solve_Problem:
 
         # operations
         table=[(str(e).split()[1].strip('>'),e.doctor, e.operation_date,e.department_name, e.operation_duration,e.operation_urgency, e.operation_room) for e in user_entries]
+        table = pd.DataFrame(table)
         basket = pd.DataFrame(table, columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
-        basket.index=basket['id']
-        
+        basket.set_index('id')
 
         #departments
         table2 =[(str(e).split()[1].strip('>'),e.department_name, e.department_capacity,e.date) for e in departments_info]
         dep_df=pd.DataFrame(table2, columns=['id','department_name','department_capacity','date'])
-        dep_df.set_index('id')
+        dep_df = dep_df.set_index('id')
         dep_df['department_capacity']=dep_df['department_capacity'].astype(int)
         
         # operation rooms
         table3 =[(str(e).split()[1].strip('>'),e.room_name, e.room_capacity,e.date) for e in operation_rooms_info]
         op_df=pd.DataFrame(table3, columns=['id','room_name','room_capacity','date'])
-        op_df.set_index('id')
+        op_df = op_df.set_index('id')
         op_df['room_capacity']=op_df['room_capacity'].astype(int)
         
         # multi-knapsack, integer divisible
@@ -42,13 +42,8 @@ class Solve_Problem:
         mdl.deps = pyo.Set(initialize=list(dep_df.department_name)) # list of departments from db
 
         # params
-
-        mdl.value   = pyo.Param(mdl.invs, initialize= {(row["id"],row["department_name"]):row["operation_urgency"] for i,row in basket.iterrows()} )
-        mdl.weight  = pyo.Param(mdl.invs, initialize= {(row["id"],row["department_name"]):row["operation_duration"] for i,row in basket.iterrows()})
-
         mdl.value   = pyo.Param(mdl.invs, initialize= {(i,row["department_name"]):row["operation_urgency"] for i,row in basket.iterrows()} )
         mdl.weight  = pyo.Param(mdl.invs, initialize= {(i,row["department_name"]):row["operation_duration"] for i,row in basket.iterrows()})
-
         mdl.bin_cap = pyo.Param(mdl.bins, initialize= {row["room_name"]:row["room_capacity"] for i,row in op_df.iterrows()} )
         mdl.dep_cap = pyo.Param(mdl.deps, initialize= {row["department_name"]:row["department_capacity"] for i,row in dep_df.iterrows()}, mutable=True)
 
