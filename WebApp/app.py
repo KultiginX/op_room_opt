@@ -91,11 +91,7 @@ def index():
                     # Bring user entry from DB
                     user_entries = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
 
-<<<<<<< HEAD
-                    #user_entries = pd.DataFrame(user_entries= user_entries.transpose(), columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
-=======
                     #basket = pd.DataFrame(user_entries= user_entries.transpose(), columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
->>>>>>> 10cce377cb0d65b0ccbcc11066fe9385f99fd1ee
                     #print(basket)
                     
                     # Call  Solve_Problem class and give all tables as arguments
