@@ -16,14 +16,9 @@ class Solve_Problem:
 
         # operations
         table=[(str(e).split()[1].strip('>'),e.doctor, e.operation_date,e.department_name, e.operation_duration,e.operation_urgency, e.operation_room) for e in user_entries]
-<<<<<<< HEAD
         basket = pd.DataFrame(table, columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
         basket.index=basket['id']
-=======
-        table = pd.DataFrame(table)
-        basket = pd.DataFrame(table, columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
-        basket.set_index('id')
->>>>>>> 10cce377cb0d65b0ccbcc11066fe9385f99fd1ee
+        
 
         #departments
         table2 =[(str(e).split()[1].strip('>'),e.department_name, e.department_capacity,e.date) for e in departments_info]
@@ -47,13 +42,13 @@ class Solve_Problem:
         mdl.deps = pyo.Set(initialize=list(dep_df.department_name)) # list of departments from db
 
         # params
-<<<<<<< HEAD
+
         mdl.value   = pyo.Param(mdl.invs, initialize= {(row["id"],row["department_name"]):row["operation_urgency"] for i,row in basket.iterrows()} )
         mdl.weight  = pyo.Param(mdl.invs, initialize= {(row["id"],row["department_name"]):row["operation_duration"] for i,row in basket.iterrows()})
-=======
+
         mdl.value   = pyo.Param(mdl.invs, initialize= {(i,row["department_name"]):row["operation_urgency"] for i,row in basket.iterrows()} )
         mdl.weight  = pyo.Param(mdl.invs, initialize= {(i,row["department_name"]):row["operation_duration"] for i,row in basket.iterrows()})
->>>>>>> 10cce377cb0d65b0ccbcc11066fe9385f99fd1ee
+
         mdl.bin_cap = pyo.Param(mdl.bins, initialize= {row["room_name"]:row["room_capacity"] for i,row in op_df.iterrows()} )
         mdl.dep_cap = pyo.Param(mdl.deps, initialize= {row["department_name"]:row["department_capacity"] for i,row in dep_df.iterrows()}, mutable=True)
 
