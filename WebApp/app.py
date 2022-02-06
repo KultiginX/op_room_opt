@@ -2,10 +2,10 @@
 #from crypt import methods
 #from distutils.log import debug
 #from pickle import FALSE
-#from urllib import request
+from urllib import request
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date, datetime
+from datetime import datetime
 import pandas as pd
 #from sqlalchemy import except_
 from algorithm3 import Solve_Problem
@@ -29,14 +29,14 @@ class User_Entries(db.Model):
     operation_room = db.Column(db.String(200))
 
 class Department_Info(db.Model):
-    #__tablename__ = 'department_info'
+    __tablename__ = 'department_info'
     id = db.Column(db.String(200), primary_key=True)
     department_name = db.Column(db.String(200), nullable=False)
     department_capacity = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
 class Operation_rooms_Info(db.Model):
-    #__tablename__ = 'operation_rooms_info'
+    __tablename__ = 'operation_rooms_info'
     id = db.Column(db.String(200), primary_key=True)
     room_name = db.Column(db.String(200), nullable=False)
     room_capacity = db.Column(db.Integer, nullable=False)
@@ -44,8 +44,8 @@ class Operation_rooms_Info(db.Model):
 
 
 
-    # def __repr__(self):
-    #    return '<User entry %r is created>' %self.id
+    def __repr__(self):
+        return '<User entry %r is created>' %self.id
 
 # Create all routes
 @app.route('/', methods=['POST', 'GET'])
@@ -91,7 +91,8 @@ def index():
                     # Bring user entry from DB
                     user_entries = User_Entries.query.filter(User_Entries.operation_date==op_date_formatted).all()
 
-             
+                    #basket = pd.DataFrame(user_entries= user_entries.transpose(), columns=['id','doctor','operation_date','department_name','operation_duration','operation_urgency','operation_room'])
+                    #print(basket)
                     
                     # Call  Solve_Problem class and give all tables as arguments
                     algorithm = Solve_Problem() 
