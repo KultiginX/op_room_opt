@@ -10,6 +10,8 @@ Pyomo with open-source solvers has already been used to solve this integer progr
 At the second stage, Shirvan Hashimov, one of Operations Research Club members,  has developed an interface and corresponding database to allow the users at the hospital to easily communicate with the solver. <br>
 This repository contains all packages. Please run run_py.ipynb file in Jupyter. If the browers does not show, click on your localhost address on the output section on the Jupyter file. 
 <br>
+Please see the or_club_krankenhaus.pdf file for the explnations about the problem and the solution. <br>
+<br>
 
 <img width="933" alt="image" src="https://user-images.githubusercontent.com/56939663/160475523-c5c3cdf4-0141-4785-b229-bfe1df8f8161.png">
 
