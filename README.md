@@ -8,8 +8,11 @@ Please watch the video for the further explaination. https://hochschule-rhein-wa
 The project has two stages. First stage is to implement an optimization algorith to solve the problem. The problem is almost identical to knapsack problem. 
 Pyomo with open-source solvers has already been used to solve this integer programing. 
 At the second stage, Shirvan Hashimov, one of Operations Research Club members,  has developed an interface and corresponding database to allow the users at the hospital to easily communicate with the solver. 
-This repository contains all packages. Please run run run_py.ipynb file in Jupyter. If the browers does not show, click on your localhost address on the output section on the Jupyter file. 
+This repository contains all packages. Please run run_py.ipynb file in Jupyter. If the browers does not show, click on your localhost address on the output section on the Jupyter file. 
 <br>
 
 <img width="933" alt="image" src="https://user-images.githubusercontent.com/56939663/160475523-c5c3cdf4-0141-4785-b229-bfe1df8f8161.png">
 
+<img width="470" alt="image" src="https://user-images.githubusercontent.com/56939663/160475952-d0d8f0cb-9025-41b0-88cc-cb37f1f9bfba.png">
+<img width="410" alt="image" src="https://user-images.githubusercontent.com/56939663/160475988-f22f1f7d-46ca-4067-ba39-761884d823a3.png">
+<img width="569" alt="image" src="https://user-images.githubusercontent.com/56939663/160476025-fb683e65-987c-4885-a8b1-8bf5bd15c6d0.png">
